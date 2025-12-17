@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram Итоги года</title>
+    <title>Telegram Итоги года 2024</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -11,180 +11,384 @@
 </head>
 <body>
     <div class="tg-app">
-        <!-- Шапка как в Telegram -->
-        <header class="tg-header">
-            <div class="tg-header-inner">
-                <button class="tg-btn tg-btn-icon tg-btn-back">
-                    <i class="fas fa-arrow-left"></i>
-                </button>
-                <div class="tg-header-title">
-                    <h1>Итоги года</h1>
-                    <span class="tg-subtitle">Telegram 2024</span>
-                </div>
-                <button class="tg-btn tg-btn-icon" id="theme-toggle">
-                    <i class="fas fa-moon"></i>
-                </button>
-            </div>
-        </header>
+        <!-- Прогресс-бар -->
+        <div class="tg-progress-bar">
+            <div class="tg-progress-fill" id="progress-fill"></div>
+        </div>
 
-        <!-- Основной контент -->
-        <main class="tg-main">
-            <!-- Промо-блок -->
-            <div class="tg-promo-card" id="promo-section">
-                <div class="tg-promo-icon">
-                    <div class="tg-icon-circle">
-                        <i class="fas fa-chart-line"></i>
+        <!-- Контейнер для слайдов -->
+        <div class="tg-slides-container">
+            <!-- Слайд 1: Приветствие -->
+            <div class="tg-slide active" id="slide1">
+                <div class="tg-slide-content">
+                    <div class="tg-slide-header">
+                        <h1 class="tg-slide-title">Восходящая звезда!</h1>
+                        <p class="tg-slide-subtitle">Ты присоединился(-ась) к Telegram</p>
                     </div>
-                </div>
-                <h2>Ваша Telegram-статистика</h2>
-                <p>Узнайте, сколько времени вы провели в Telegram, сколько сообщений отправили и многое другое</p>
-                
-                <button class="tg-btn tg-btn-primary tg-btn-large" id="generate-btn">
-                    <i class="fas fa-play-circle"></i>
-                    Сгенерировать отчёт
-                </button>
-                
-                <div class="tg-hint">
-                    <i class="fas fa-info-circle"></i>
-                    Данные генерируются случайным образом в развлекательных целях
+                    
+                    <!-- Центральная GIF -->
+                    <div class="tg-gif-container">
+                        <img src="https://media.giphy.com/media/26tknCqiJrBQG6DrW/giphy.gif" 
+                             alt="Восходящая звезда" 
+                             class="tg-slide-gif"
+                             id="gif-slide1">
+                        <div class="tg-gif-overlay">
+                            <div class="tg-stat-big" id="days-joined">1 948</div>
+                            <div class="tg-stat-label-big">дней назад</div>
+                        </div>
+                    </div>
+                    
+                    <p class="tg-slide-description">
+                        С тех пор ты успел(-а) отправить тысячи сообщений, 
+                        поставить сотни реакций и стать частью нашего сообщества!
+                    </p>
                 </div>
             </div>
 
-            <!-- Результаты -->
-            <div class="tg-results hidden" id="results-section">
-                <!-- Общая статистика -->
-                <div class="tg-section">
-                    <div class="tg-section-header">
-                        <h3><i class="fas fa-chart-pie"></i> Общая статистика</h3>
+            <!-- Слайд 2: Premium статус -->
+            <div class="tg-slide" id="slide2">
+                <div class="tg-slide-content">
+                    <div class="tg-slide-header">
+                        <h1 class="tg-slide-title">Telegram Premium</h1>
+                        <p class="tg-slide-subtitle">Premium пользователи – легенды!</p>
                     </div>
                     
-                    <div class="tg-stats-grid">
-                        <div class="tg-stat-card">
-                            <div class="tg-stat-icon" style="background: var(--tg-theme-button-color, #3390ec);">
-                                <i class="fas fa-clock"></i>
-                            </div>
-                            <div class="tg-stat-info">
-                                <span class="tg-stat-label">Проведено времени</span>
-                                <span class="tg-stat-value" id="time-spent">0 дн. 0 ч.</span>
-                            </div>
-                        </div>
-                        
-                        <div class="tg-stat-card">
-                            <div class="tg-stat-icon" style="background: #4caf50;">
-                                <i class="fas fa-comment-alt"></i>
-                            </div>
-                            <div class="tg-stat-info">
-                                <span class="tg-stat-label">Сообщений отправлено</span>
-                                <span class="tg-stat-value" id="messages-sent">0</span>
-                            </div>
-                        </div>
-                        
-                        <div class="tg-stat-card">
-                            <div class="tg-stat-icon" style="background: #ff4081;">
-                                <i class="fas fa-heart"></i>
-                            </div>
-                            <div class="tg-stat-info">
-                                <span class="tg-stat-label">Реакций поставлено</span>
-                                <span class="tg-stat-value" id="reactions-given">0</span>
-                            </div>
-                        </div>
-                        
-                        <div class="tg-stat-card">
-                            <div class="tg-stat-icon" style="background: #ff9800;">
-                                <i class="fas fa-image"></i>
-                            </div>
-                            <div class="tg-stat-info">
-                                <span class="tg-stat-label">Медиа отправлено</span>
-                                <span class="tg-stat-value" id="media-sent">0</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Детальная статистика -->
-                <div class="tg-section">
-                    <div class="tg-section-header">
-                        <h3><i class="fas fa-chart-bar"></i> Детальная статистика</h3>
-                    </div>
-                    
-                    <div class="tg-list">
-                        <div class="tg-list-item">
-                            <div class="tg-list-icon">
-                                <i class="fas fa-smile"></i>
-                            </div>
-                            <div class="tg-list-content">
-                                <span class="tg-list-title">Любимый эмодзи</span>
-                                <span class="tg-list-description" id="top-emoji">—</span>
-                            </div>
-                        </div>
-                        
-                        <div class="tg-list-item">
-                            <div class="tg-list-icon">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <div class="tg-list-content">
-                                <span class="tg-list-title">Самый активный чат</span>
-                                <span class="tg-list-description" id="top-chat">—</span>
-                            </div>
-                        </div>
-                        
-                        <div class="tg-list-item">
-                            <div class="tg-list-icon">
+                    <!-- Центральная GIF -->
+                    <div class="tg-gif-container">
+                        <img src="https://media.giphy.com/media/xT5LMHxhOfscxPfIfm/giphy.gif" 
+                             alt="Premium статус" 
+                             class="tg-slide-gif"
+                             id="gif-slide2">
+                        <div class="tg-gif-overlay premium">
+                            <div class="tg-premium-badge">
                                 <i class="fas fa-crown"></i>
-                            </div>
-                            <div class="tg-list-content">
-                                <span class="tg-list-title">Ваш статус</span>
-                                <span class="tg-list-description" id="user-rank">—</span>
+                                <span id="premium-status">Premium пользователь</span>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <!-- Забавный факт -->
-                <div class="tg-fun-fact" id="fun-fact">
-                    <div class="tg-fun-fact-icon">
-                        <i class="fas fa-lightbulb"></i>
+                    
+                    <div class="tg-premium-features">
+                        <div class="tg-premium-feature">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Увеличенные лимиты</span>
+                        </div>
+                        <div class="tg-premium-feature">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Эксклюзивные стикеры</span>
+                        </div>
+                        <div class="tg-premium-feature">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Отсутствие рекламы</span>
+                        </div>
                     </div>
-                    <p class="tg-fun-fact-text">Здесь появится интересный факт о вашей активности</p>
                 </div>
             </div>
-        </main>
 
-        <!-- Кнопки действий как в Telegram -->
-        <div class="tg-actions hidden" id="actions-section">
-            <button class="tg-btn tg-btn-secondary" id="share-btn">
+            <!-- Слайд 3: Публичные чаты -->
+            <div class="tg-slide" id="slide3">
+                <div class="tg-slide-content">
+                    <div class="tg-slide-header">
+                        <h1 class="tg-slide-title"># Душа компании</h1>
+                        <p class="tg-slide-subtitle">Ты весь год был(-а) в центре общения!</p>
+                    </div>
+                    
+                    <!-- Центральная GIF -->
+                    <div class="tg-gif-container">
+                        <img src="https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif" 
+                             alt="Душа компании" 
+                             class="tg-slide-gif"
+                             id="gif-slide3">
+                        <div class="tg-gif-overlay">
+                            <div class="tg-stat-big" id="public-chats">25</div>
+                            <div class="tg-stat-label-big">публичных чатов</div>
+                        </div>
+                    </div>
+                    
+                    <p class="tg-slide-description">
+                        <strong>Вы участник в <span id="chats-count">25</span> публичных чатах</strong><br>
+                        Твоя активность вдохновляет других на общение!
+                    </p>
+                </div>
+            </div>
+
+            <!-- Слайд 4: Сообщения в чатах -->
+            <div class="tg-slide" id="slide4">
+                <div class="tg-slide-content">
+                    <div class="tg-slide-header">
+                        <h1 class="tg-slide-title">Количество сообщений</h1>
+                        <p class="tg-slide-subtitle">Всего в публичных чатах ты написал(-а)</p>
+                    </div>
+                    
+                    <!-- Центральная GIF -->
+                    <div class="tg-gif-container">
+                        <img src="https://media.giphy.com/media/26n6WywJyh39n1pBu/giphy.gif" 
+                             alt="Сообщения" 
+                             class="tg-slide-gif"
+                             id="gif-slide4">
+                        <div class="tg-gif-overlay">
+                            <div class="tg-stat-big" id="messages-count">4.928</div>
+                            <div class="tg-stat-label-big">сообщений</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tg-comparison">
+                        <div class="tg-comparison-item">
+                            <span>Это больше, чем у</span>
+                            <strong>87% пользователей</strong>
+                        </div>
+                        <div class="tg-comparison-item">
+                            <span>Средняя длина:</span>
+                            <strong id="avg-message-length">32 символа</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Слайд 5: Истории -->
+            <div class="tg-slide" id="slide5">
+                <div class="tg-slide-content">
+                    <div class="tg-slide-header">
+                        <h1 class="tg-slide-title">Просмотренные истории</h1>
+                        <p class="tg-slide-subtitle">Главное — быть в курсе событий!</p>
+                    </div>
+                    
+                    <!-- Центральная GIF -->
+                    <div class="tg-gif-container">
+                        <img src="https://media.giphy.com/media/l0HU7Vt4qgdEwFgmA/giphy.gif" 
+                             alt="Истории" 
+                             class="tg-slide-gif"
+                             id="gif-slide5">
+                        <div class="tg-gif-overlay">
+                            <div class="tg-stat-big" id="stories-viewed">2.266</div>
+                            <div class="tg-stat-label-big">историй</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tg-fun-fact">
+                        <i class="fas fa-lightbulb"></i>
+                        Если бы каждая история длилась 15 секунд, ты потратил(-а) бы 
+                        <strong id="stories-time">9.5 часов</strong> на их просмотр!
+                    </div>
+                </div>
+            </div>
+
+            <!-- Слайд 6: Голосовые сообщения -->
+            <div class="tg-slide" id="slide6">
+                <div class="tg-slide-content">
+                    <div class="tg-slide-header">
+                        <h1 class="tg-slide-title">Общая длина кружков</h1>
+                        <p class="tg-slide-subtitle">Это твоя любимая функция?</p>
+                    </div>
+                    
+                    <!-- Центральная GIF -->
+                    <div class="tg-gif-container">
+                        <img src="https://media.giphy.com/media/3o7abKhOpu0NwenH3O/giphy.gif" 
+                             alt="Голосовые сообщения" 
+                             class="tg-slide-gif"
+                             id="gif-slide6">
+                        <div class="tg-gif-overlay">
+                            <div class="tg-stat-big" id="voice-time">5:29</div>
+                            <div class="tg-stat-label-big">часов записей</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tg-detail-stats">
+                        <div class="tg-detail-stat">
+                            <span>Всего записей:</span>
+                            <strong id="voice-count">148</strong>
+                        </div>
+                        <div class="tg-detail-stat">
+                            <span>Самая длинная:</span>
+                            <strong id="longest-voice">7 мин</strong>
+                        </div>
+                        <div class="tg-detail-stat">
+                            <span>Средняя длина:</span>
+                            <strong id="avg-voice">2.2 мин</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Слайд 7: Удаленные сообщения -->
+            <div class="tg-slide" id="slide7">
+                <div class="tg-slide-content">
+                    <div class="tg-slide-header">
+                        <h1 class="tg-slide-title">Удаленные сообщения</h1>
+                        <p class="tg-slide-subtitle">Простая ошибка... или передумал(-а)?</p>
+                    </div>
+                    
+                    <!-- Центральная GIF -->
+                    <div class="tg-gif-container">
+                        <img src="https://media.giphy.com/media/l0MYAsiP1HcZPvzEQ/giphy.gif" 
+                             alt="Удаленные сообщения" 
+                             class="tg-slide-gif"
+                             id="gif-slide7">
+                        <div class="tg-gif-overlay">
+                            <div class="tg-stat-big" id="deleted-messages">2 805</div>
+                            <div class="tg-stat-label-big">сообщений</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tg-deleted-stats">
+                        <div class="tg-deleted-stat">
+                            <div class="tg-deleted-label">Удалено за 1 секунду</div>
+                            <div class="tg-deleted-value" id="deleted-quick">824</div>
+                        </div>
+                        <div class="tg-deleted-stat">
+                            <div class="tg-deleted-label">Удалено через минуту</div>
+                            <div class="tg-deleted-value" id="deleted-minute">1,105</div>
+                        </div>
+                        <div class="tg-deleted-stat">
+                            <div class="tg-deleted-label">Удалено через день</div>
+                            <div class="tg-deleted-value" id="deleted-day">876</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Слайд 8: Итог -->
+            <div class="tg-slide" id="slide8">
+                <div class="tg-slide-content">
+                    <div class="tg-slide-header">
+                        <h1 class="tg-slide-title">Твои итоги 2024!</h1>
+                        <p class="tg-slide-subtitle">Вот как ты провел(-а) год в Telegram</p>
+                    </div>
+                    
+                    <!-- Центральная GIF -->
+                    <div class="tg-gif-container">
+                        <img src="https://media.giphy.com/media/26tkhwX6Vnhl8QcC4/giphy.gif" 
+                             alt="Итоги" 
+                             class="tg-slide-gif"
+                             id="gif-slide8">
+                        <div class="tg-gif-overlay final">
+                            <div class="tg-final-icon">
+                                <i class="fas fa-trophy"></i>
+                            </div>
+                            <div class="tg-final-title" id="user-status">Легенда чатов</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tg-final-stats">
+                        <div class="tg-final-stat">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span><strong id="final-days">1,948</strong> дней в Telegram</span>
+                        </div>
+                        <div class="tg-final-stat">
+                            <i class="fas fa-comments"></i>
+                            <span><strong id="final-messages">4,928</strong> сообщений</span>
+                        </div>
+                        <div class="tg-final-stat">
+                            <i class="fas fa-clock"></i>
+                            <span><strong id="final-voice">5.5</strong> часов голосовых</span>
+                        </div>
+                        <div class="tg-final-stat">
+                            <i class="fas fa-eye"></i>
+                            <span><strong id="final-stories">2,266</strong> историй</span>
+                        </div>
+                    </div>
+                    
+                    <div class="tg-cta">
+                        <p>Поделись результатами с друзьями!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Навигационные кнопки -->
+        <div class="tg-navigation">
+            <button class="tg-btn tg-btn-secondary" id="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                Назад
+            </button>
+            <button class="tg-btn tg-btn-primary" id="next-btn">
+                Продолжить
+                <i class="fas fa-arrow-right"></i>
+            </button>
+            <button class="tg-btn tg-btn-primary hidden" id="share-final-btn">
                 <i class="fas fa-share-alt"></i>
                 Поделиться
             </button>
-            <button class="tg-btn tg-btn-secondary" id="regenerate-btn">
-                <i class="fas fa-redo"></i>
-                Обновить
-            </button>
         </div>
-    </div>
 
-    <!-- Модальное окно для шеринга -->
-    <div class="tg-modal hidden" id="share-modal">
-        <div class="tg-modal-content">
-            <div class="tg-modal-header">
-                <h3>Поделиться результатами</h3>
-                <button class="tg-btn tg-btn-icon tg-modal-close">
-                    <i class="fas fa-times"></i>
-                </button>
+        <!-- Индикатор слайдов -->
+        <div class="tg-slide-indicator">
+            <div class="tg-slide-dots" id="slide-dots"></div>
+            <div class="tg-slide-counter">
+                <span id="current-slide">1</span>/<span id="total-slides">8</span>
             </div>
-            <div class="tg-modal-body">
-                <p>Скопируйте текст или сделайте скриншот, чтобы поделиться с друзьями!</p>
-                <div class="tg-share-text" id="share-text">
-                    <!-- Текст для шеринга -->
+        </div>
+
+        <!-- Модальное окно для шеринга -->
+        <div class="tg-modal hidden" id="share-modal">
+            <div class="tg-modal-content">
+                <div class="tg-modal-header">
+                    <h3>Поделиться результатами</h3>
+                    <button class="tg-btn tg-btn-icon tg-modal-close">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
-                <button class="tg-btn tg-btn-primary" id="copy-btn">
-                    <i class="fas fa-copy"></i>
-                    Скопировать текст
-                </button>
+                <div class="tg-modal-body">
+                    <div class="tg-share-preview">
+                        <div class="tg-share-card">
+                            <div class="tg-share-header">
+                                <i class="fas fa-star"></i>
+                                <h4>Мои итоги 2024 в Telegram</h4>
+                            </div>
+                            <div class="tg-share-stats">
+                                <div class="tg-share-stat">
+                                    <span>Дней в Telegram:</span>
+                                    <strong id="share-days">1,948</strong>
+                                </div>
+                                <div class="tg-share-stat">
+                                    <span>Сообщений:</span>
+                                    <strong id="share-messages">4,928</strong>
+                                </div>
+                                <div class="tg-share-stat">
+                                    <span>Историй просмотрено:</span>
+                                    <strong id="share-stories">2,266</strong>
+                                </div>
+                                <div class="tg-share-stat">
+                                    <span>Статус:</span>
+                                    <strong id="share-status">Легенда чатов</strong>
+                                </div>
+                            </div>
+                            <div class="tg-share-footer">
+                                #TelegramИтоги2024
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tg-share-actions">
+                        <button class="tg-btn tg-btn-secondary" id="copy-text-btn">
+                            <i class="fas fa-copy"></i>
+                            Скопировать текст
+                        </button>
+                        <button class="tg-btn tg-btn-primary" id="copy-image-btn">
+                            <i class="fas fa-image"></i>
+                            Скопировать картинку
+                        </button>
+                        <button class="tg-btn tg-btn-secondary" id="share-telegram-btn">
+                            <i class="fab fa-telegram"></i>
+                            Поделиться в Telegram
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Прелоадер для GIF -->
+        <div class="tg-preloader hidden">
+            <div class="tg-preloader-content">
+                <div class="tg-preloader-spinner">
+                    <i class="fas fa-spinner fa-spin"></i>
+                </div>
+                <p>Загружаем анимации...</p>
             </div>
         </div>
     </div>
 
+    <!-- Для генерации картинки (html2canvas) -->
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

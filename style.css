@@ -1,42 +1,37 @@
-/* Telegram-стили с использованием CSS переменных для тем */
+/* Telegram-стили для слайдшоу с GIF */
 :root {
-    /* Светлая тема (Telegram) */
-    --tg-bg-color: #ffffff;
-    --tg-secondary-bg: #f5f5f5;
-    --tg-text-color: #000000;
-    --tg-subtext-color: #707579;
-    --tg-primary-color: #3390ec;
-    --tg-primary-hover: #2a7bc8;
-    --tg-border-color: #e0e0e0;
-    --tg-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    --tg-card-bg: #ffffff;
-    --tg-hover-bg: #f8f8f8;
+    /* Цвета Telegram */
+    --tg-primary: #3390ec;
+    --tg-primary-dark: #2a7bc8;
+    --tg-secondary: #707579;
+    --tg-bg: #ffffff;
+    --tg-surface: #f8f8f8;
+    --tg-text: #000000;
+    --tg-text-secondary: #707579;
+    --tg-border: #e7e8ec;
+    --tg-success: #4caf50;
+    --tg-warning: #ff9800;
+    --tg-error: #f44336;
+    --tg-premium: #ffd700;
     
     /* Тёмная тема */
-    --tg-dark-bg-color: #0f0f0f;
-    --tg-dark-secondary-bg: #1a1a1a;
-    --tg-dark-text-color: #ffffff;
-    --tg-dark-subtext-color: #aaaaaa;
-    --tg-dark-primary-color: #3390ec;
-    --tg-dark-border-color: #2a2a2a;
-    --tg-dark-card-bg: #1a1a1a;
-    --tg-dark-hover-bg: #2a2a2a;
+    --tg-dark-bg: #0f0f0f;
+    --tg-dark-surface: #1a1a1a;
+    --tg-dark-text: #ffffff;
+    --tg-dark-text-secondary: #aaaaaa;
+    --tg-dark-border: #2a2a2a;
 }
 
-/* Применяем тему на основе системных настроек или Telegram */
 @media (prefers-color-scheme: dark) {
     :root {
-        --tg-bg-color: var(--tg-dark-bg-color);
-        --tg-secondary-bg: var(--tg-dark-secondary-bg);
-        --tg-text-color: var(--tg-dark-text-color);
-        --tg-subtext-color: var(--tg-dark-subtext-color);
-        --tg-border-color: var(--tg-dark-border-color);
-        --tg-card-bg: var(--tg-dark-card-bg);
-        --tg-hover-bg: var(--tg-dark-hover-bg);
+        --tg-bg: var(--tg-dark-bg);
+        --tg-surface: var(--tg-dark-surface);
+        --tg-text: var(--tg-dark-text);
+        --tg-text-secondary: var(--tg-dark-text-secondary);
+        --tg-border: var(--tg-dark-border);
     }
 }
 
-/* Основные стили */
 * {
     margin: 0;
     padding: 0;
@@ -45,81 +40,500 @@
 }
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-    background-color: var(--tg-bg-color);
-    color: var(--tg-text-color);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--tg-bg);
+    color: var(--tg-text);
     line-height: 1.5;
-    transition: background-color 0.3s, color 0.3s;
+    height: 100vh;
+    overflow: hidden;
 }
 
 .tg-app {
-    max-width: 100%;
-    min-height: 100vh;
+    height: 100vh;
     display: flex;
     flex-direction: column;
+    position: relative;
+    max-width: 500px;
+    margin: 0 auto;
+    background-color: var(--tg-bg);
 }
 
-/* Шапка как в Telegram */
-.tg-header {
-    background-color: var(--tg-bg-color);
-    border-bottom: 1px solid var(--tg-border-color);
-    position: sticky;
+/* Прогресс-бар */
+.tg-progress-bar {
+    height: 3px;
+    background-color: var(--tg-surface);
+    width: 100%;
+    position: fixed;
     top: 0;
-    z-index: 100;
-    backdrop-filter: blur(10px);
-    background-color: rgba(var(--tg-bg-color-rgb, 255, 255, 255), 0.9);
+    left: 0;
+    z-index: 1000;
 }
 
-.tg-header-inner {
+.tg-progress-fill {
+    height: 100%;
+    background-color: var(--tg-primary);
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+/* Контейнер слайдов */
+.tg-slides-container {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    padding: 20px 24px 100px;
+    scroll-behavior: smooth;
+}
+
+.tg-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 20px 0;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow-y: auto;
+}
+
+.tg-slide.active {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.tg-slide.prev {
+    transform: translateX(-100%);
+}
+
+.tg-slide-content {
+    text-align: center;
+    max-width: 400px;
+    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* Заголовки */
+.tg-slide-header {
+    margin-bottom: 20px;
+}
+
+.tg-slide-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--tg-text);
+    line-height: 1.2;
+}
+
+.tg-slide-subtitle {
+    font-size: 16px;
+    color: var(--tg-text-secondary);
+    line-height: 1.4;
+}
+
+/* Контейнер для GIF */
+.tg-gif-container {
+    flex: 1;
+    position: relative;
     display: flex;
     align-items: center;
-    padding: 12px 16px;
-    height: 56px;
+    justify-content: center;
+    margin: 20px 0;
+    border-radius: 24px;
+    overflow: hidden;
+    background: linear-gradient(135deg, rgba(51, 144, 236, 0.1), rgba(76, 175, 80, 0.1));
+    border: 2px solid var(--tg-border);
+    min-height: 300px;
+    max-height: 350px;
 }
 
-.tg-header-title {
-    flex: 1;
-    text-align: center;
-    margin: 0 16px;
-}
-
-.tg-header-title h1 {
-    font-size: 17px;
-    font-weight: 600;
-    color: var(--tg-text-color);
-}
-
-.tg-subtitle {
-    font-size: 13px;
-    color: var(--tg-subtext-color);
+.tg-slide-gif {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     display: block;
+}
+
+/* Оверлей поверх GIF */
+.tg-gif-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 30px 20px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+    color: white;
+    text-align: center;
+}
+
+.tg-gif-overlay.premium {
+    background: linear-gradient(to top, rgba(255, 215, 0, 0.9), transparent);
+    color: #000;
+}
+
+.tg-gif-overlay.final {
+    background: linear-gradient(to top, rgba(76, 175, 80, 0.9), transparent);
+}
+
+/* Большая статистика на GIF */
+.tg-stat-big {
+    font-size: 64px;
+    font-weight: 800;
+    color: white;
+    margin: 0;
+    line-height: 1;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.tg-stat-label-big {
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.9);
+    margin-top: 8px;
+    font-weight: 500;
+}
+
+.tg-gif-overlay.premium .tg-stat-big,
+.tg-gif-overlay.premium .tg-stat-label-big {
+    color: #000;
+    text-shadow: none;
+}
+
+/* Premium бейдж */
+.tg-premium-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 12px 24px;
+    border-radius: 50px;
+    margin: 0 auto;
+    max-width: 250px;
+}
+
+.tg-premium-badge i {
+    color: var(--tg-premium);
+    font-size: 20px;
+}
+
+.tg-premium-badge span {
+    font-size: 18px;
+    font-weight: 600;
+    color: #000;
+}
+
+/* Финал иконка */
+.tg-final-icon {
+    width: 80px;
+    height: 80px;
+    background-color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+}
+
+.tg-final-icon i {
+    font-size: 40px;
+    color: var(--tg-success);
+}
+
+.tg-final-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: white;
+}
+
+/* Premium фичи */
+.tg-premium-features {
+    background-color: var(--tg-surface);
+    border-radius: 16px;
+    padding: 20px;
+    margin: 20px 0;
+    border: 1px solid var(--tg-border);
+}
+
+.tg-premium-feature {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.tg-premium-feature:last-child {
+    margin-bottom: 0;
+}
+
+.tg-premium-feature i {
+    color: var(--tg-success);
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.tg-premium-feature span {
+    font-size: 16px;
+    color: var(--tg-text);
+    text-align: left;
+}
+
+/* Описание */
+.tg-slide-description {
+    font-size: 15px;
+    color: var(--tg-text-secondary);
+    margin-top: 20px;
+    line-height: 1.6;
+    padding: 0 10px;
+}
+
+/* Сравнения и детали */
+.tg-comparison {
+    background-color: var(--tg-surface);
+    border-radius: 16px;
+    padding: 20px;
+    margin: 20px 0;
+    border: 1px solid var(--tg-border);
+}
+
+.tg-comparison-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--tg-border);
+}
+
+.tg-comparison-item:last-child {
+    border-bottom: none;
+}
+
+.tg-comparison-item span {
+    color: var(--tg-text-secondary);
+    font-size: 14px;
+}
+
+.tg-comparison-item strong {
+    color: var(--tg-text);
+    font-size: 16px;
+}
+
+/* Детальная статистика */
+.tg-detail-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.tg-detail-stat {
+    background-color: var(--tg-surface);
+    border-radius: 12px;
+    padding: 20px 10px;
+    text-align: center;
+    border: 1px solid var(--tg-border);
+}
+
+.tg-detail-stat span {
+    display: block;
+    font-size: 13px;
+    color: var(--tg-text-secondary);
+    margin-bottom: 8px;
+}
+
+.tg-detail-stat strong {
+    display: block;
+    font-size: 18px;
+    color: var(--tg-text);
+    font-weight: 600;
+}
+
+/* Статистика удаленных сообщений */
+.tg-deleted-stats {
+    background-color: var(--tg-surface);
+    border-radius: 16px;
+    padding: 24px;
+    margin: 20px 0;
+    border: 1px solid var(--tg-border);
+}
+
+.tg-deleted-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--tg-border);
+}
+
+.tg-deleted-stat:last-child {
+    border-bottom: none;
+}
+
+.tg-deleted-label {
+    color: var(--tg-text-secondary);
+    font-size: 14px;
+}
+
+.tg-deleted-value {
+    color: var(--tg-error);
+    font-size: 18px;
+    font-weight: 700;
+}
+
+/* Итоговая статистика */
+.tg-final-stats {
+    background-color: var(--tg-surface);
+    border-radius: 20px;
+    padding: 24px;
+    margin: 20px 0;
+    border: 1px solid var(--tg-border);
+}
+
+.tg-final-stat {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--tg-border);
+}
+
+.tg-final-stat:last-child {
+    border-bottom: none;
+}
+
+.tg-final-stat i {
+    width: 40px;
+    height: 40px;
+    background-color: var(--tg-primary);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.tg-final-stat:nth-child(2) i {
+    background-color: var(--tg-success);
+}
+
+.tg-final-stat:nth-child(3) i {
+    background-color: var(--tg-warning);
+}
+
+.tg-final-stat:nth-child(4) i {
+    background-color: #9c27b0;
+}
+
+.tg-final-stat span {
+    font-size: 16px;
+    color: var(--tg-text);
+    flex: 1;
+    text-align: left;
+}
+
+.tg-final-stat strong {
+    font-size: 18px;
+}
+
+/* Забавный факт */
+.tg-fun-fact {
+    background-color: var(--tg-surface);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    border-left: 4px solid var(--tg-warning);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.tg-fun-fact i {
+    color: var(--tg-warning);
+    font-size: 18px;
+    flex-shrink: 0;
     margin-top: 2px;
 }
 
-/* Кнопки Telegram */
-.tg-btn {
-    background: none;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-family: inherit;
-    font-size: 15px;
-    font-weight: 500;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: all 0.2s;
-    color: var(--tg-text-color);
+.tg-fun-fact strong {
+    color: var(--tg-text);
 }
 
-.tg-btn:hover {
-    background-color: var(--tg-hover-bg);
+/* Призыв к действию */
+.tg-cta {
+    background-color: var(--tg-surface);
+    border-radius: 16px;
+    padding: 24px;
+    margin: 20px 0;
+    border: 2px dashed var(--tg-primary);
+}
+
+.tg-cta p {
+    font-size: 16px;
+    color: var(--tg-text);
+    font-weight: 500;
+}
+
+/* Навигация */
+.tg-navigation {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 20px 24px;
+    background-color: var(--tg-bg);
+    border-top: 1px solid var(--tg-border);
+    display: flex;
+    gap: 12px;
+    z-index: 100;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.tg-btn {
+    flex: 1;
+    padding: 16px 24px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.2s;
+    font-family: inherit;
 }
 
 .tg-btn:active {
     transform: scale(0.98);
+}
+
+.tg-btn-primary {
+    background-color: var(--tg-primary);
+    color: white;
+}
+
+.tg-btn-primary:hover {
+    background-color: var(--tg-primary-dark);
+}
+
+.tg-btn-secondary {
+    background-color: var(--tg-surface);
+    color: var(--tg-text);
+    border: 1px solid var(--tg-border);
+}
+
+.tg-btn-secondary:hover {
+    background-color: var(--tg-border);
 }
 
 .tg-btn-icon {
@@ -127,287 +541,75 @@ body {
     height: 40px;
     padding: 0;
     border-radius: 50%;
+    flex: 0 0 40px;
 }
 
-.tg-btn-primary {
-    background-color: var(--tg-primary-color);
-    color: white;
-    border: none;
-}
-
-.tg-btn-primary:hover {
-    background-color: var(--tg-primary-hover);
-    color: white;
-}
-
-.tg-btn-secondary {
-    background-color: var(--tg-secondary-bg);
-    color: var(--tg-text-color);
-    border: 1px solid var(--tg-border-color);
-}
-
-.tg-btn-large {
-    padding: 14px 24px;
-    font-size: 16px;
-    font-weight: 600;
-}
-
-.tg-btn-back {
-    margin-right: auto;
-}
-
-/* Основной контент */
-.tg-main {
-    flex: 1;
-    padding: 16px;
-    max-width: 600px;
+/* Индикатор слайдов */
+.tg-slide-indicator {
+    position: fixed;
+    bottom: 90px;
+    left: 0;
+    right: 0;
+    padding: 0 24px;
+    z-index: 99;
+    max-width: 500px;
     margin: 0 auto;
-    width: 100%;
 }
 
-/* Промо-карточка */
-.tg-promo-card {
-    background-color: var(--tg-card-bg);
-    border-radius: 16px;
-    padding: 32px 24px;
+.tg-slide-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.tg-slide-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--tg-border);
+    transition: all 0.3s;
+}
+
+.tg-slide-dot.active {
+    background-color: var(--tg-primary);
+    width: 24px;
+    border-radius: 4px;
+}
+
+.tg-slide-counter {
     text-align: center;
-    box-shadow: var(--tg-shadow);
-    border: 1px solid var(--tg-border-color);
-    margin-bottom: 24px;
+    font-size: 14px;
+    color: var(--tg-text-secondary);
 }
 
-.tg-promo-icon {
+/* Прелоадер */
+.tg-preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--tg-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.tg-preloader-content {
+    text-align: center;
+}
+
+.tg-preloader-spinner {
+    font-size: 48px;
+    color: var(--tg-primary);
     margin-bottom: 20px;
 }
 
-.tg-icon-circle {
-    width: 80px;
-    height: 80px;
-    background: linear-gradient(135deg, var(--tg-primary-color), #4fc3f7);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto;
-}
-
-.tg-icon-circle i {
-    font-size: 36px;
-    color: white;
-}
-
-.tg-promo-card h2 {
-    font-size: 22px;
-    font-weight: 700;
-    margin-bottom: 12px;
-    color: var(--tg-text-color);
-}
-
-.tg-promo-card p {
-    font-size: 15px;
-    color: var(--tg-subtext-color);
-    margin-bottom: 24px;
-    line-height: 1.5;
-}
-
-.tg-hint {
-    font-size: 13px;
-    color: var(--tg-subtext-color);
-    margin-top: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-}
-
-/* Секции */
-.tg-section {
-    margin-bottom: 24px;
-}
-
-.tg-section-header {
-    padding: 16px 0 12px;
-    border-bottom: 1px solid var(--tg-border-color);
-    margin-bottom: 16px;
-}
-
-.tg-section-header h3 {
+.tg-preloader p {
     font-size: 16px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.tg-section-header i {
-    color: var(--tg-primary-color);
-}
-
-/* Карточки статистики */
-.tg-stats-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-    margin-bottom: 16px;
-}
-
-.tg-stat-card {
-    background-color: var(--tg-card-bg);
-    border-radius: 12px;
-    padding: 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    border: 1px solid var(--tg-border-color);
-    transition: transform 0.2s;
-}
-
-.tg-stat-card:hover {
-    transform: translateY(-2px);
-}
-
-.tg-stat-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.tg-stat-icon i {
-    font-size: 20px;
-    color: white;
-}
-
-.tg-stat-info {
-    flex: 1;
-    min-width: 0;
-}
-
-.tg-stat-label {
-    font-size: 13px;
-    color: var(--tg-subtext-color);
-    display: block;
-    margin-bottom: 4px;
-}
-
-.tg-stat-value {
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--tg-text-color);
-    display: block;
-}
-
-/* Список как в Telegram */
-.tg-list {
-    background-color: var(--tg-card-bg);
-    border-radius: 12px;
-    overflow: hidden;
-    border: 1px solid var(--tg-border-color);
-}
-
-.tg-list-item {
-    padding: 16px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    border-bottom: 1px solid var(--tg-border-color);
-    transition: background-color 0.2s;
-}
-
-.tg-list-item:last-child {
-    border-bottom: none;
-}
-
-.tg-list-item:hover {
-    background-color: var(--tg-hover-bg);
-}
-
-.tg-list-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
-    background-color: var(--tg-secondary-bg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.tg-list-icon i {
-    font-size: 18px;
-    color: var(--tg-primary-color);
-}
-
-.tg-list-content {
-    flex: 1;
-    min-width: 0;
-}
-
-.tg-list-title {
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--tg-text-color);
-    display: block;
-    margin-bottom: 4px;
-}
-
-.tg-list-description {
-    font-size: 14px;
-    color: var(--tg-subtext-color);
-    display: block;
-}
-
-/* Забавный факт */
-.tg-fun-fact {
-    background: linear-gradient(135deg, rgba(51, 144, 236, 0.1), rgba(76, 175, 80, 0.1));
-    border-radius: 12px;
-    padding: 20px;
-    display: flex;
-    align-items: flex-start;
-    gap: 16px;
-    margin-top: 24px;
-    border-left: 4px solid var(--tg-primary-color);
-}
-
-.tg-fun-fact-icon {
-    width: 40px;
-    height: 40px;
-    background-color: var(--tg-primary-color);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.tg-fun-fact-icon i {
-    font-size: 18px;
-    color: white;
-}
-
-.tg-fun-fact-text {
-    font-size: 15px;
-    color: var(--tg-text-color);
-    font-style: italic;
-    line-height: 1.5;
-}
-
-/* Кнопки действий */
-.tg-actions {
-    display: flex;
-    gap: 12px;
-    padding: 16px;
-    background-color: var(--tg-bg-color);
-    border-top: 1px solid var(--tg-border-color);
-    position: sticky;
-    bottom: 0;
-}
-
-.tg-actions .tg-btn {
-    flex: 1;
+    color: var(--tg-text-secondary);
 }
 
 /* Модальное окно */
@@ -422,64 +624,111 @@ body {
     align-items: center;
     justify-content: center;
     z-index: 1000;
-    padding: 16px;
+    padding: 20px;
     backdrop-filter: blur(4px);
 }
 
 .tg-modal-content {
-    background-color: var(--tg-card-bg);
-    border-radius: 16px;
+    background-color: var(--tg-bg);
+    border-radius: 20px;
     width: 100%;
     max-width: 400px;
     max-height: 80vh;
     overflow-y: auto;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-    border: 1px solid var(--tg-border-color);
+    border: 1px solid var(--tg-border);
 }
 
 .tg-modal-header {
-    padding: 20px;
-    border-bottom: 1px solid var(--tg-border-color);
+    padding: 24px;
+    border-bottom: 1px solid var(--tg-border);
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
 .tg-modal-header h3 {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 600;
+    color: var(--tg-text);
 }
 
 .tg-modal-body {
-    padding: 20px;
+    padding: 24px;
 }
 
-.tg-share-text {
-    background-color: var(--tg-secondary-bg);
-    border-radius: 8px;
+/* Карточка для шеринга */
+.tg-share-card {
+    background-color: var(--tg-surface);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+    border: 1px solid var(--tg-border);
+}
+
+.tg-share-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.tg-share-header i {
+    width: 40px;
+    height: 40px;
+    background-color: var(--tg-primary);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tg-share-header h4 {
+    font-size: 18px;
+    color: var(--tg-text);
+}
+
+.tg-share-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.tg-share-stat {
+    background-color: var(--tg-bg);
+    border-radius: 12px;
     padding: 16px;
-    margin: 16px 0;
+    text-align: center;
+}
+
+.tg-share-stat span {
+    display: block;
+    font-size: 13px;
+    color: var(--tg-text-secondary);
+    margin-bottom: 8px;
+}
+
+.tg-share-stat strong {
+    display: block;
+    font-size: 16px;
+    color: var(--tg-text);
+    font-weight: 600;
+}
+
+.tg-share-footer {
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--tg-border);
+    color: var(--tg-text-secondary);
     font-size: 14px;
-    line-height: 1.6;
-    white-space: pre-line;
-    max-height: 200px;
-    overflow-y: auto;
 }
 
-/* Анимации */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.tg-results {
-    animation: fadeIn 0.3s ease-out;
+.tg-share-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
 /* Утилиты */
@@ -487,31 +736,86 @@ body {
     display: none !important;
 }
 
+/* Анимации */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+@keyframes gifLoad {
+    0% {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.tg-slide-gif {
+    animation: gifLoad 0.5s ease-out;
+}
+
 /* Адаптивность */
 @media (max-width: 480px) {
-    .tg-stats-grid {
+    .tg-slide-title {
+        font-size: 24px;
+    }
+    
+    .tg-stat-big {
+        font-size: 48px;
+    }
+    
+    .tg-gif-container {
+        min-height: 250px;
+        max-height: 300px;
+    }
+    
+    .tg-detail-stats {
         grid-template-columns: 1fr;
     }
     
-    .tg-actions {
-        flex-direction: column;
+    .tg-share-stats {
+        grid-template-columns: 1fr;
     }
     
-    .tg-main {
-        padding: 12px;
+    .tg-navigation {
+        padding: 16px;
+    }
+    
+    .tg-btn {
+        padding: 14px 20px;
+    }
+    
+    .tg-slides-container {
+        padding: 15px 16px 100px;
     }
 }
 
-/* Анимация генерации */
-@keyframes pulse {
-    0%, 100% {
-        opacity: 1;
+/* Для очень маленьких экранов */
+@media (max-height: 700px) {
+    .tg-gif-container {
+        min-height: 200px;
+        max-height: 250px;
     }
-    50% {
-        opacity: 0.7;
+    
+    .tg-stat-big {
+        font-size: 48px;
     }
-}
-
-.generating {
-    animation: pulse 1s infinite;
 }
