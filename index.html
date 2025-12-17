@@ -3,74 +3,186 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Итоги года в Telegram</title>
+    <title>Telegram Итоги года</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
-    <!-- Подключаем Telegram Web App SDK -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>🎉 Твои итоги 2024 в Telegram</h1>
-            <p class="subtitle">Готов узнать, как ты провел этот год в мессенджере?</p>
+    <div class="tg-app">
+        <!-- Шапка как в Telegram -->
+        <header class="tg-header">
+            <div class="tg-header-inner">
+                <button class="tg-btn tg-btn-icon tg-btn-back">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <div class="tg-header-title">
+                    <h1>Итоги года</h1>
+                    <span class="tg-subtitle">Telegram 2024</span>
+                </div>
+                <button class="tg-btn tg-btn-icon" id="theme-toggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
         </header>
 
-        <main id="results" class="hidden">
-            <div class="stat-card">
-                <div class="stat-icon">⏱️</div>
-                <div class="stat-text">
-                    <div class="stat-label">Всего времени в Telegram</div>
-                    <div class="stat-value" id="time-spent">...</div>
+        <!-- Основной контент -->
+        <main class="tg-main">
+            <!-- Промо-блок -->
+            <div class="tg-promo-card" id="promo-section">
+                <div class="tg-promo-icon">
+                    <div class="tg-icon-circle">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                </div>
+                <h2>Ваша Telegram-статистика</h2>
+                <p>Узнайте, сколько времени вы провели в Telegram, сколько сообщений отправили и многое другое</p>
+                
+                <button class="tg-btn tg-btn-primary tg-btn-large" id="generate-btn">
+                    <i class="fas fa-play-circle"></i>
+                    Сгенерировать отчёт
+                </button>
+                
+                <div class="tg-hint">
+                    <i class="fas fa-info-circle"></i>
+                    Данные генерируются случайным образом в развлекательных целях
                 </div>
             </div>
 
-            <div class="stat-card">
-                <div class="stat-icon">✉️</div>
-                <div class="stat-text">
-                    <div class="stat-label">Отправлено сообщений</div>
-                    <div class="stat-value" id="messages-sent">...</div>
+            <!-- Результаты -->
+            <div class="tg-results hidden" id="results-section">
+                <!-- Общая статистика -->
+                <div class="tg-section">
+                    <div class="tg-section-header">
+                        <h3><i class="fas fa-chart-pie"></i> Общая статистика</h3>
+                    </div>
+                    
+                    <div class="tg-stats-grid">
+                        <div class="tg-stat-card">
+                            <div class="tg-stat-icon" style="background: var(--tg-theme-button-color, #3390ec);">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="tg-stat-info">
+                                <span class="tg-stat-label">Проведено времени</span>
+                                <span class="tg-stat-value" id="time-spent">0 дн. 0 ч.</span>
+                            </div>
+                        </div>
+                        
+                        <div class="tg-stat-card">
+                            <div class="tg-stat-icon" style="background: #4caf50;">
+                                <i class="fas fa-comment-alt"></i>
+                            </div>
+                            <div class="tg-stat-info">
+                                <span class="tg-stat-label">Сообщений отправлено</span>
+                                <span class="tg-stat-value" id="messages-sent">0</span>
+                            </div>
+                        </div>
+                        
+                        <div class="tg-stat-card">
+                            <div class="tg-stat-icon" style="background: #ff4081;">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            <div class="tg-stat-info">
+                                <span class="tg-stat-label">Реакций поставлено</span>
+                                <span class="tg-stat-value" id="reactions-given">0</span>
+                            </div>
+                        </div>
+                        
+                        <div class="tg-stat-card">
+                            <div class="tg-stat-icon" style="background: #ff9800;">
+                                <i class="fas fa-image"></i>
+                            </div>
+                            <div class="tg-stat-info">
+                                <span class="tg-stat-label">Медиа отправлено</span>
+                                <span class="tg-stat-value" id="media-sent">0</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <div class="stat-card">
-                <div class="stat-icon">❤️</div>
-                <div class="stat-text">
-                    <div class="stat-label">Поставлено реакций</div>
-                    <div class="stat-value" id="reactions-given">...</div>
+                <!-- Детальная статистика -->
+                <div class="tg-section">
+                    <div class="tg-section-header">
+                        <h3><i class="fas fa-chart-bar"></i> Детальная статистика</h3>
+                    </div>
+                    
+                    <div class="tg-list">
+                        <div class="tg-list-item">
+                            <div class="tg-list-icon">
+                                <i class="fas fa-smile"></i>
+                            </div>
+                            <div class="tg-list-content">
+                                <span class="tg-list-title">Любимый эмодзи</span>
+                                <span class="tg-list-description" id="top-emoji">—</span>
+                            </div>
+                        </div>
+                        
+                        <div class="tg-list-item">
+                            <div class="tg-list-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="tg-list-content">
+                                <span class="tg-list-title">Самый активный чат</span>
+                                <span class="tg-list-description" id="top-chat">—</span>
+                            </div>
+                        </div>
+                        
+                        <div class="tg-list-item">
+                            <div class="tg-list-icon">
+                                <i class="fas fa-crown"></i>
+                            </div>
+                            <div class="tg-list-content">
+                                <span class="tg-list-title">Ваш статус</span>
+                                <span class="tg-list-description" id="user-rank">—</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <div class="stat-card">
-                <div class="stat-icon">😂</div>
-                <div class="stat-text">
-                    <div class="stat-label">Любимый эмодзи</div>
-                    <div class="stat-value" id="top-emoji">...</div>
+                <!-- Забавный факт -->
+                <div class="tg-fun-fact" id="fun-fact">
+                    <div class="tg-fun-fact-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <p class="tg-fun-fact-text">Здесь появится интересный факт о вашей активности</p>
                 </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-icon">👑</div>
-                <div class="stat-text">
-                    <div class="stat-label">Топ-чаты</div>
-                    <div class="stat-value" id="top-chat">...</div>
-                </div>
-            </div>
-
-            <div class="fun-fact" id="fun-fact">
-                <!-- Сюда вставится случайный факт -->
             </div>
         </main>
 
-        <div class="action-area">
-            <button id="generate-btn" class="btn-primary">Узнать мои результаты</button>
-            <button id="share-btn" class="btn-secondary hidden">📤 Поделиться</button>
-            <p class="hint">* Все результаты сгенерированы случайным образом для развлечения</p>
+        <!-- Кнопки действий как в Telegram -->
+        <div class="tg-actions hidden" id="actions-section">
+            <button class="tg-btn tg-btn-secondary" id="share-btn">
+                <i class="fas fa-share-alt"></i>
+                Поделиться
+            </button>
+            <button class="tg-btn tg-btn-secondary" id="regenerate-btn">
+                <i class="fas fa-redo"></i>
+                Обновить
+            </button>
         </div>
+    </div>
 
-        <footer>
-            <p>Создано с ❤️ для Telegram</p>
-        </footer>
+    <!-- Модальное окно для шеринга -->
+    <div class="tg-modal hidden" id="share-modal">
+        <div class="tg-modal-content">
+            <div class="tg-modal-header">
+                <h3>Поделиться результатами</h3>
+                <button class="tg-btn tg-btn-icon tg-modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="tg-modal-body">
+                <p>Скопируйте текст или сделайте скриншот, чтобы поделиться с друзьями!</p>
+                <div class="tg-share-text" id="share-text">
+                    <!-- Текст для шеринга -->
+                </div>
+                <button class="tg-btn tg-btn-primary" id="copy-btn">
+                    <i class="fas fa-copy"></i>
+                    Скопировать текст
+                </button>
+            </div>
+        </div>
     </div>
 
     <script src="app.js"></script>
