@@ -369,12 +369,70 @@
                         </button>
                         <button class="tg-btn tg-btn-primary" id="share-story-btn">
                             <i class="fas fa-history"></i>
-                            Поделиться в историях и получить подарок (ёлку)
+                            Выложить в историю и получить ёлочку
                         </button>
                         <button class="tg-btn tg-btn-secondary" id="share-telegram-btn">
                             <i class="fab fa-telegram"></i>
                             Поделиться в Telegram
                         </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Модальное окно с заданием -->
+        <div class="tg-modal hidden" id="task-modal">
+            <div class="tg-modal-content">
+                <div class="tg-modal-header">
+                    <h3>🎄 Задание: получи ёлочку в подарок!</h3>
+                    <button class="tg-btn tg-btn-icon tg-modal-close" id="task-close-btn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="tg-modal-body">
+                    <div class="tg-share-card">
+                        <div class="tg-share-header">
+                            <i class="fas fa-tree" style="color: #4CAF50;"></i>
+                            <h4>Выложи в историю итоги и получи ёлочку</h4>
+                        </div>
+                        
+                        <div class="tg-premium-features" style="margin-top: 15px;">
+                            <div class="tg-premium-feature">
+                                <i class="fas fa-1" style="color: #3390ec; font-weight: bold;"></i>
+                                <span>Нажмите кнопку ниже, чтобы скопировать картинку с вашими итогами</span>
+                            </div>
+                            <div class="tg-premium-feature">
+                                <i class="fas fa-2" style="color: #3390ec; font-weight: bold;"></i>
+                                <span>Откройте Telegram и нажмите "Добавить историю"</span>
+                            </div>
+                            <div class="tg-premium-feature">
+                                <i class="fas fa-3" style="color: #3390ec; font-weight: bold;"></i>
+                                <span>Выберите скопированную картинку и нажмите "Выложить"</span>
+                            </div>
+                            <div class="tg-premium-feature">
+                                <i class="fas fa-4" style="color: #4CAF50; font-weight: bold;"></i>
+                                <span>Вернитесь сюда и получите ёлочку в подарок! 🎄</span>
+                            </div>
+                        </div>
+                        
+                        <div class="tg-share-actions" style="margin-top: 20px;">
+                            <button class="tg-btn tg-btn-primary" id="copy-for-story-btn">
+                                <i class="fas fa-copy"></i>
+                                Скопировать картинку для истории
+                            </button>
+                            <button class="tg-btn tg-btn-secondary" id="open-telegram-btn">
+                                <i class="fab fa-telegram"></i>
+                                Открыть Telegram
+                            </button>
+                            <button class="tg-btn tg-btn-primary" id="task-done-btn">
+                                <i class="fas fa-check-circle"></i>
+                                Я выложил(а) историю, дайте ёлочку!
+                            </button>
+                        </div>
+                        
+                        <div class="tg-share-footer" style="margin-top: 15px;">
+                            🎁 После проверки вы получите новогоднюю ёлку в подарок!
+                        </div>
                     </div>
                 </div>
             </div>
@@ -395,6 +453,18 @@
                             <i class="fas fa-clock"></i>
                             <h4>Ожидайте проверки</h4>
                         </div>
+                        
+                        <div class="tg-gif-container" style="min-height: 150px; max-height: 180px; margin: 15px 0;">
+                            <img src="gifs/christmas-tree.gif" 
+                                 alt="Новогодняя ёлка" 
+                                 class="tg-slide-gif"
+                                 id="tree-gif">
+                            <div class="tg-gif-overlay">
+                                <div class="tg-stat-big">🎄</div>
+                                <div class="tg-stat-label-big">Ваша ёлочка</div>
+                            </div>
+                        </div>
+                        
                         <p style="text-align: center; margin: 15px 0; font-size: 14px; color: var(--tg-text);">
                             Ваша история отправлена на модерацию. Обычно это занимает до 24 часов.
                         </p>
