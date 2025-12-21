@@ -333,7 +333,7 @@ function generateShareText() {
 
 🏆 Мой статус: ${userData.userStatus}
 
-🎁 Опубликуй историю и получи новогоднюю ёлку в подарок!
+🎁 Выложи в историю итоги и получи ёлочку в подарок!
 
 #TelegramИтоги2025 #МоиИтоги #НовогоднийПодарок`;
 }
@@ -358,6 +358,32 @@ async function createShareImage() {
         console.error('Ошибка создания картинки:', error);
         return null;
     }
+}
+
+// Функция для копирования картинки
+async function copyImageToClipboard() {
+    const blob = await createShareImage();
+    
+    if (blob) {
+        try {
+            await navigator.clipboard.write([
+                new ClipboardItem({ 'image/png': blob })
+            ]);
+            return { success: true, downloaded: false };
+        } catch (err) {
+            // Fallback: скачивание картинки
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'telegram-2025-results.png';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            return { success: true, downloaded: true };
+        }
+    }
+    return { success: false };
 }
 
 // Показать модальное окно шеринга
@@ -398,7 +424,7 @@ function initApp() {
     nextBtn.addEventListener('click', () => goToSlide(currentSlide + 1));
     shareFinalBtn.addEventListener('click', showShareModal);
     
-    // Кнопки в модальном окне
+    // Кнопки в модальном окне шеринга
     document.getElementById('copy-text-btn').addEventListener('click', async () => {
         const text = generateShareText();
         const success = await copyToClipboard(text);
@@ -416,38 +442,18 @@ function initApp() {
     
     document.getElementById('copy-image-btn').addEventListener('click', async () => {
         const btn = document.getElementById('copy-image-btn');
+        const originalText = btn.innerHTML;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Создаём картинку...';
         
-        const blob = await createShareImage();
+        const imageResult = await copyImageToClipboard();
         
-        if (blob) {
-            try {
-                await navigator.clipboard.write([
-                    new ClipboardItem({ 'image/png': blob })
-                ]);
-                
-                btn.innerHTML = '<i class="fas fa-check"></i> Картинка скопирована!';
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-                
-                setTimeout(() => {
-                    btn.innerHTML = '<i class="fas fa-image"></i> Скопировать картинку';
-                }, 2000);
-            } catch (err) {
-                // Fallback: скачивание картинки
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'telegram-2025-results.png';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                
-                btn.innerHTML = '<i class="fas fa-download"></i> Скачано!';
-                setTimeout(() => {
-                    btn.innerHTML = '<i class="fas fa-image"></i> Скопировать картинку';
-                }, 2000);
-            }
+        if (imageResult.success) {
+            btn.innerHTML = '<i class="fas fa-check"></i> Картинка скопирована!';
+            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fas fa-image"></i> Скопировать картинку';
+            }, 2000);
         } else {
             btn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Ошибка';
             setTimeout(() => {
@@ -463,76 +469,87 @@ function initApp() {
         hideShareModal();
     });
     
-    // НОВАЯ КНОПКА: Поделиться в историях и получить подарок (ёлку)
-    document.getElementById('share-story-btn').addEventListener('click', async () => {
-        const btn = document.getElementById('share-story-btn');
+    // Кнопка "Выложить в историю и получить ёлочку"
+    document.getElementById('share-story-btn').addEventListener('click', () => {
+        hideShareModal(); // Скрываем модальное окно шеринга
+        document.getElementById('task-modal').classList.remove('hidden'); // Показываем окно с заданием
+    });
+    
+    // Кнопки в модальном окне с заданием
+    document.getElementById('copy-for-story-btn').addEventListener('click', async () => {
+        const btn = document.getElementById('copy-for-story-btn');
         const originalText = btn.innerHTML;
-        
-        // Показываем индикатор загрузки
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Подготовка к публикации...';
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Копируем...';
         btn.disabled = true;
-        
+
         try {
-            // 1. Создаем картинку для шеринга
-            const blob = await createShareImage();
+            // Копируем текст
+            const text = generateShareText();
+            await copyToClipboard(text);
             
-            if (!blob) {
-                throw new Error('Не удалось создать картинку');
+            // Копируем картинку
+            const imageResult = await copyImageToClipboard();
+            
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.notificationOccurred('success');
             }
             
-            // 2. Сохраняем картинку во временное хранилище
-            const imageUrl = URL.createObjectURL(blob);
-            
-            // 3. Создаем ссылку для открытия Telegram с изображением
-            const telegramStoryUrl = `tg://share?url=${encodeURIComponent(imageUrl)}&text=${encodeURIComponent(generateShareText())}`;
-            
-            // 4. Показываем инструкцию перед открытием Telegram
             if (tg.showAlert) {
-                tg.showAlert('Сейчас откроется Telegram для публикации в историях!\n\nПосле публикации вернитесь в это приложение для получения подарка 🎄');
+                let message = '✅ Готово! Текст и картинка скопированы!\n\nТеперь открой Telegram, создай историю и вставь картинку. Добавь скопированный текст и нажми "Выложить".';
+                if (imageResult.downloaded) {
+                    message = '✅ Готово! Текст скопирован в буфер обмена, а картинка скачана в галерею!\n\nТеперь открой Telegram, создай историю, выбери скачанную картинку и добавь скопированный текст. Затем нажми "Выложить".';
+                }
+                tg.showAlert(message);
             }
             
-            // 5. Открываем Telegram через deep link
-            window.location.href = telegramStoryUrl;
-            
-            // 6. Fallback: если deep link не сработал, открываем обычный Telegram
+            // Обновляем текст кнопки на 3 секунды
+            btn.innerHTML = '<i class="fas fa-check"></i> Скопировано!';
             setTimeout(() => {
-                window.open('tg://', '_blank');
-                
-                // Показываем инструкцию в случае если deep link не сработал
-                if (tg.showAlert) {
-                    tg.showAlert('Если Telegram не открылся автоматически:\n1. Откройте Telegram вручную\n2. Нажмите "Истории" (кружок с плюсом)\n3. Выберите картинку из галереи\n4. Опубликуйте и вернитесь сюда за подарком!');
-                }
-            }, 1000);
-            
-            // 7. После 3 секунд показываем окно модерации
-            setTimeout(() => {
-                // Закрываем модальное окно шеринга
-                hideShareModal();
-                
-                // Показываем модальное окно модерации
-                document.getElementById('moderation-modal').classList.remove('hidden');
-                
-                // Вибрация для уведомления
-                if (tg.HapticFeedback) {
-                    tg.HapticFeedback.notificationOccurred('success');
-                }
+                btn.innerHTML = originalText;
+                btn.disabled = false;
             }, 3000);
             
-            // 8. Освобождаем URL через 30 секунд
-            setTimeout(() => {
-                URL.revokeObjectURL(imageUrl);
-            }, 30000);
-            
         } catch (error) {
-            console.error('Ошибка при подготовке к публикации:', error);
-            
+            console.error('Ошибка при копировании:', error);
             if (tg.showAlert) {
-                tg.showAlert('Ошибка при подготовке. Попробуйте еще раз.');
+                tg.showAlert('Ошибка при копировании. Попробуйте еще раз.');
             }
-            
-            // Восстанавливаем кнопку
             btn.innerHTML = originalText;
             btn.disabled = false;
+        }
+    });
+    
+    document.getElementById('open-telegram-btn').addEventListener('click', () => {
+        // Открываем Telegram
+        window.open('tg://', '_blank');
+        
+        if (tg.showAlert) {
+            tg.showAlert('Telegram открывается! Создайте новую историю, выберите картинку и добавьте текст. После публикации вернитесь сюда и нажмите "Я выложил(а) историю"');
+        }
+    });
+    
+    document.getElementById('task-done-btn').addEventListener('click', () => {
+        document.getElementById('task-modal').classList.add('hidden');
+        document.getElementById('moderation-modal').classList.remove('hidden');
+        
+        if (tg.showAlert) {
+            tg.showAlert('🎄 Супер! Мы проверяем вашу историю. После модерации вы получите ёлочку в подарок!');
+        }
+        
+        if (tg.HapticFeedback) {
+            tg.HapticFeedback.notificationOccurred('success');
+        }
+    });
+    
+    // Кнопка закрытия окна с заданием
+    document.getElementById('task-close-btn').addEventListener('click', () => {
+        document.getElementById('task-modal').classList.add('hidden');
+    });
+    
+    // Закрытие окна с заданием по клику на фон
+    document.getElementById('task-modal').addEventListener('click', (e) => {
+        if (e.target === document.getElementById('task-modal')) {
+            document.getElementById('task-modal').classList.add('hidden');
         }
     });
     
@@ -594,6 +611,9 @@ function initApp() {
         if (e.key === 'Escape') {
             if (!shareModal.classList.contains('hidden')) {
                 hideShareModal();
+            }
+            if (!document.getElementById('task-modal').classList.contains('hidden')) {
+                document.getElementById('task-modal').classList.add('hidden');
             }
             if (!document.getElementById('moderation-modal').classList.contains('hidden')) {
                 document.getElementById('moderation-modal').classList.add('hidden');
