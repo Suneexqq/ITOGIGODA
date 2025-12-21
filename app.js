@@ -8,9 +8,7 @@ tg.MainButton.hide();
 let currentSlide = 1;
 const totalSlides = 8;
 let userData = {};
-let isPremium = Math.random() > 0.7; // 30% шанс быть Premium
-let gifsLoaded = 0;
-const totalGifs = 8;
+let giftClaimed = false;
 
 // Элементы DOM
 const progressFill = document.getElementById('progress-fill');
@@ -18,58 +16,153 @@ const backBtn = document.getElementById('back-btn');
 const nextBtn = document.getElementById('next-btn');
 const shareFinalBtn = document.getElementById('share-final-btn');
 const shareModal = document.getElementById('share-modal');
+const giftModal = document.getElementById('gift-modal');
 const slideDots = document.getElementById('slide-dots');
 const currentSlideEl = document.getElementById('current-slide');
 const totalSlidesEl = document.getElementById('total-slides');
-const preloader = document.querySelector('.tg-preloader');
+const preloader = document.getElementById('preloader');
 
-// Массив GIF (можно заменить на ваши локальные GIF)
-const gifUrls = [
-    'https://tenor.com/ru/view/hi-hello-pepe-plush-pepe-ice-gif-15252032868912441634', // slide1 - звезда
-    'https://tenor.com/ru/view/utya-utya-duck-telegram-duck-gif-14505757111885760769', // slide2 - premium
-    'https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif', // slide3 - чаты
-    'https://media.giphy.com/media/26n6WywJyh39n1pBu/giphy.gif', // slide4 - сообщения
-    'https://media.giphy.com/media/l0HU7Vt4qgdEwFgmA/giphy.gif', // slide5 - истории
-    'https://media.giphy.com/media/3o7abKhOpu0NwenH3O/giphy.gif', // slide6 - голосовые
-    'https://media.giphy.com/media/l0MYAsiP1HcZPvzEQ/giphy.gif', // slide7 - удаленные
-    'https://media.giphy.com/media/26tkhwX6Vnhl8QcC4/giphy.gif'  // slide8 - итог
-];
+// Функция для генерации случайных чисел в диапазоне
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
-// Альтернативные локальные пути (если GIF лежат в папке gifs/)
-const localGifPaths = [
-    'gifs/slide1.gif',
-    'gifs/slide2.gif', 
-    'gifs/slide3.gif',
-    'gifs/slide4.gif',
-    'gifs/slide5.gif',
-    'gifs/slide6.gif',
-    'gifs/slide7.gif',
-    'gifs/slide8.gif'
-];
+// Функция для генерации случайных чисел с плавающей точкой
+function getRandomFloat(min, max, decimals = 1) {
+    const rand = Math.random() * (max - min) + min;
+    return parseFloat(rand.toFixed(decimals));
+}
 
-// Генерация данных пользователя
+// Функция для форматирования времени (часы:минуты)
+function formatTime(minutes) {
+    const hours = Math.floor(minutes / 60);
+    const mins = Math.floor(minutes % 60);
+    return `${hours}:${mins.toString().padStart(2, '0')}`;
+}
+
+// Функция для определения статуса пользователя с разными титулами
+function getUserStatus(data) {
+    const messagesPerDay = data.messagesCount / data.daysSinceJoin;
+    const voicePerDay = data.voiceCount / data.daysSinceJoin;
+    const storiesPerDay = data.storiesViewed / data.daysSinceJoin;
+    
+    // Определение типа пользователя по активности
+    if (data.voiceCount > 300 && data.voiceHours > 5) {
+        return "Король голосовых";
+    }
+    
+    if (data.messagesCount > 5000 && messagesPerDay > 10) {
+        return "Мастер общения";
+    }
+    
+    if (data.storiesViewed > 500 && storiesPerDay > 2) {
+        return "Завсегдатай историй";
+    }
+    
+    if (data.publicChats > 30) {
+        return "Душа компании";
+    }
+    
+    if (data.isPremium && data.messagesCount > 3000) {
+        return "Премиум-легенда";
+    }
+    
+    if (data.messagesCount > 1500) {
+        return "Активный пользователь";
+    }
+    
+    if (data.voiceCount > 30) {
+        return "Любитель голосовых";
+    }
+    
+    if (data.storiesViewed > 200) {
+        return "Любитель историй";
+    }
+    
+    if (data.daysSinceJoin > 300) {
+        return "Ветеран Telegram";
+    }
+    
+    // По умолчанию
+    const statuses = ["Новичок", "Начинающий", "Любознательный", "Наблюдатель", "Спокойный пользователь"];
+    return statuses[Math.floor(Math.random() * statuses.length)];
+}
+
+// Генерация промокода для подарка
+function generateGiftCode() {
+    const prefix = "TGBOT2025";
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    let code = "";
+    
+    for (let i = 0; i < 6; i++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    
+    return `${prefix}-${code}`;
+}
+
+// Генерация данных пользователя с изменёнными диапазонами
 function generateUserData() {
-    userData = {
-        daysSinceJoin: 1948,
+    // Слайд 1: дни в Telegram (ОТ 30 ДО 500 дней - меньше)
+    const daysSinceJoin = getRandomInt(30, 500);
+    
+    // Слайд 2: Premium статус (30% шанс)
+    const isPremium = Math.random() > 0.7;
+    
+    // Слайд 3: публичные чаты (от 1 до 50)
+    const publicChats = getRandomInt(1, 50);
+    
+    // Слайд 4: сообщения (от 70,000 до 200,000)
+    const messagesCount = getRandomInt(70000, 200000);
+    const avgMessageLength = getRandomInt(15, 80);
+    
+    // Слайд 5: истории (ОТ 150 ДО 500)
+    const storiesViewed = getRandomInt(150, 500);
+    const storiesTime = getRandomFloat(2, 15, 1); // от 2 до 15 часов
+    
+    // Слайд 6: голосовые сообщения (от 7 до 10 часов)
+    const voiceMinutes = getRandomInt(420, 600); // 7-10 часов в минутах
+    const voiceCount = getRandomInt(50, 300);
+    const longestVoice = getRandomInt(5, 15); // от 5 до 15 минут
+    const avgVoiceMinutes = voiceMinutes / voiceCount;
+    
+    // Слайд 7: удаленные сообщения (от 1,000 до 30,000)
+    const deletedMessages = getRandomInt(1000, 30000);
+    const deletedQuick = Math.floor(deletedMessages * getRandomFloat(0.2, 0.4));
+    const deletedMinute = Math.floor(deletedMessages * getRandomFloat(0.3, 0.5));
+    const deletedDay = deletedMessages - deletedQuick - deletedMinute;
+    
+    // Слайд 8: статус пользователя (разные титулы)
+    const userStatus = getUserStatus({
+        daysSinceJoin: daysSinceJoin,
         isPremium: isPremium,
-        premiumPercent: isPremium ? 5 : 0,
-        publicChats: 25,
-        messagesCount: 4928,
-        avgMessageLength: 32,
-        storiesViewed: 2266,
-        uniqueUsers: 125,
-        storiesDay: 'Пятница',
-        storiesTime: '9.5',
-        voiceHours: '5:29',
-        voiceCount: 148,
-        longestVoice: 7,
-        avgVoice: '2.2',
-        deletedMessages: 2805,
-        deletedQuick: 824,
-        deletedMinute: 1105,
-        deletedDay: 876,
-        deletedPercent: 15,
-        userStatus: 'Легенда чатов'
+        publicChats: publicChats,
+        messagesCount: messagesCount,
+        storiesViewed: storiesViewed,
+        voiceCount: voiceCount,
+        voiceHours: voiceMinutes / 60
+    });
+    
+    userData = {
+        daysSinceJoin: daysSinceJoin,
+        isPremium: isPremium,
+        premiumPercent: isPremium ? getRandomInt(1, 10) : 0,
+        publicChats: publicChats,
+        messagesCount: messagesCount,
+        avgMessageLength: avgMessageLength,
+        storiesViewed: storiesViewed,
+        storiesTime: storiesTime.toFixed(1),
+        voiceHours: formatTime(voiceMinutes),
+        voiceCount: voiceCount,
+        longestVoice: longestVoice,
+        avgVoice: avgVoiceMinutes.toFixed(1),
+        deletedMessages: deletedMessages,
+        deletedQuick: deletedQuick,
+        deletedMinute: deletedMinute,
+        deletedDay: deletedDay,
+        deletedPercent: Math.floor((deletedMessages / messagesCount) * 100) || 0,
+        userStatus: userStatus,
+        giftCode: generateGiftCode()
     };
     
     // Обновляем UI с данными
@@ -120,68 +213,40 @@ function updateDataUI() {
     document.getElementById('share-messages').textContent = userData.messagesCount.toLocaleString();
     document.getElementById('share-stories').textContent = userData.storiesViewed.toLocaleString();
     document.getElementById('share-status').textContent = userData.userStatus;
-}
-
-// Предзагрузка GIF
-function preloadGifs() {
-    preloader.classList.remove('hidden');
     
-    gifUrls.forEach((url, index) => {
-        const img = new Image();
-        img.src = url;
-        img.onload = () => {
-            gifsLoaded++;
-            updatePreloaderProgress();
-            
-            // Обновляем src у соответствующих img элементов
-            const gifElement = document.getElementById(`gif-slide${index + 1}`);
-            if (gifElement) {
-                gifElement.src = url;
-            }
-            
-            // Если все GIF загружены, скрываем прелоадер
-            if (gifsLoaded === totalGifs) {
-                setTimeout(() => {
-                    preloader.classList.add('hidden');
-                }, 500);
-            }
-        };
-        
-        img.onerror = () => {
-            // Если GIF не загрузился, пробуем локальный путь
-            console.warn(`Не удалось загрузить GIF ${index + 1}, пробуем локальный путь`);
-            gifsLoaded++;
-            updatePreloaderProgress();
-            
-            // Пробуем загрузить локальную версию
-            try {
-                const localImg = new Image();
-                localImg.src = localGifPaths[index];
-                localImg.onload = () => {
-                    const gifElement = document.getElementById(`gif-slide${index + 1}`);
-                    if (gifElement) {
-                        gifElement.src = localGifPaths[index];
-                    }
-                };
-            } catch (e) {
-                console.error(`Не удалось загрузить GIF для слайда ${index + 1}`);
-            }
-            
-            if (gifsLoaded === totalGifs) {
-                setTimeout(() => {
-                    preloader.classList.add('hidden');
-                }, 500);
-            }
-        };
-    });
+    // Для подарка
+    document.getElementById('gift-code').textContent = userData.giftCode;
 }
 
-// Обновление прогресса загрузки
-function updatePreloaderProgress() {
-    const progress = Math.round((gifsLoaded / totalGifs) * 100);
-    const preloaderText = document.querySelector('.tg-preloader p');
-    if (preloaderText) {
-        preloaderText.textContent = `Загружаем анимации... ${progress}%`;
+// Создание снегопада
+function createSnowfall() {
+    const snowContainer = document.createElement('div');
+    snowContainer.className = 'snowfall-container';
+    document.body.appendChild(snowContainer);
+    
+    // Создаем снежинки
+    for (let i = 0; i < 100; i++) {
+        const snowflake = document.createElement('div');
+        snowflake.className = 'snowflake';
+        
+        // Случайные параметры для снежинок
+        const size = Math.random() * 5 + 2;
+        const startLeft = Math.random() * 100;
+        const animationDuration = Math.random() * 10 + 5;
+        const animationDelay = Math.random() * 5;
+        const opacity = Math.random() * 0.6 + 0.3;
+        
+        snowflake.style.cssText = `
+            width: ${size}px;
+            height: ${size}px;
+            left: ${startLeft}vw;
+            animation-duration: ${animationDuration}s;
+            animation-delay: ${animationDelay}s;
+            opacity: ${opacity};
+            background: ${Math.random() > 0.5 ? 'rgba(255, 255, 255, 0.8)' : 'rgba(200, 230, 255, 0.6)'};
+        `;
+        
+        snowContainer.appendChild(snowflake);
     }
 }
 
@@ -203,11 +268,11 @@ function goToSlide(slideNumber) {
     if (slideNumber < 1 || slideNumber > totalSlides) return;
     
     // Анимация перехода
-    const currentSlideEl = document.getElementById(`slide${currentSlide}`);
-    const nextSlideEl = document.getElementById(`slide${slideNumber}`);
+    const currentSlideElement = document.getElementById(`slide${currentSlide}`);
+    const nextSlideElement = document.getElementById(`slide${slideNumber}`);
     
-    currentSlideEl.classList.remove('active');
-    nextSlideEl.classList.add('active');
+    currentSlideElement.classList.remove('active');
+    nextSlideElement.classList.add('active');
     
     // Обновление текущего слайда
     currentSlide = slideNumber;
@@ -220,19 +285,6 @@ function goToSlide(slideNumber) {
     // Вибрация (если поддерживается)
     if (tg.HapticFeedback) {
         tg.HapticFeedback.impactOccurred('light');
-    }
-    
-    // Предзагрузка следующего GIF, если нужно
-    if (slideNumber < totalSlides) {
-        preloadNextGif(slideNumber + 1);
-    }
-}
-
-// Предзагрузка следующего GIF
-function preloadNextGif(nextSlide) {
-    if (nextSlide <= totalGifs) {
-        const nextGif = new Image();
-        nextGif.src = gifUrls[nextSlide - 1];
     }
 }
 
@@ -290,7 +342,7 @@ async function copyToClipboard(text) {
 
 // Генерация текста для шеринга
 function generateShareText() {
-    return `🌟 Мои итоги 2024 в Telegram! 🌟
+    return `🌟 Мои итоги 2025 в Telegram! 🌟
 
 📅 В Telegram уже: ${userData.daysSinceJoin.toLocaleString()} дней
 💬 Отправлено сообщений: ${userData.messagesCount.toLocaleString()}
@@ -300,7 +352,7 @@ function generateShareText() {
 
 🏆 Мой статус: ${userData.userStatus}
 
-#TelegramИтоги2024 #МоиИтоги`;
+#TelegramИтоги2025 #МоиИтоги`;
 }
 
 // Создание картинки для шеринга
@@ -338,15 +390,177 @@ function hideShareModal() {
     shareModal.classList.add('hidden');
 }
 
+// Показать модальное окно с подарком
+function showGiftModal() {
+    giftModal.classList.remove('hidden');
+    
+    // Анимация ёлочки
+    const tree = document.getElementById('gift-tree');
+    tree.style.animation = 'tree-glow 2s infinite alternate';
+    
+    // Вибрация (если поддерживается)
+    if (tg.HapticFeedback) {
+        tg.HapticFeedback.impactOccurred('heavy');
+    }
+}
+
+// Скрыть модальное окно с подарком
+function hideGiftModal() {
+    giftModal.classList.add('hidden');
+}
+
+// Функция для шеринга в истории Telegram с получением подарка
+async function shareToTelegramStoriesWithGift() {
+    const btn = document.getElementById('share-story-gift-btn');
+    const originalText = btn.innerHTML;
+    
+    // Показываем индикатор загрузки
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Подготавливаем подарок...';
+    btn.disabled = true;
+    
+    try {
+        // Создаем картинку
+        const blob = await createShareImage();
+        
+        if (!blob) {
+            throw new Error('Не удалось создать картинку');
+        }
+        
+        // Создаем URL для картинки
+        const imageUrl = URL.createObjectURL(blob);
+        
+        // Генерируем текст для шеринга
+        const shareText = `🎄 Поделюсь своими итогами 2025 в Telegram и получу новогоднюю ёлочку! 🎁\n\n${generateShareText()}`;
+        
+        // Открываем Telegram для шеринга в историях
+        const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(imageUrl)}&text=${encodeURIComponent(shareText)}`;
+        window.open(telegramUrl, '_blank');
+        
+        // Помечаем подарок как полученный
+        giftClaimed = true;
+        
+        // Сохраняем в локальное хранилище
+        localStorage.setItem('telegram2025_giftClaimed', 'true');
+        localStorage.setItem('telegram2025_giftCode', userData.giftCode);
+        
+        // Показываем подарок через 1 секунду
+        setTimeout(() => {
+            hideShareModal();
+            showGiftModal();
+            
+            // Показываем сообщение об успехе
+            if (tg.showAlert) {
+                tg.showAlert('🎉 Спасибо за публикацию! Твой новогодний подарок уже ждёт тебя!');
+            }
+        }, 1000);
+        
+        // Освобождаем URL через 30 секунд
+        setTimeout(() => {
+            URL.revokeObjectURL(imageUrl);
+        }, 30000);
+        
+    } catch (error) {
+        console.error('Ошибка при шеринге в истории:', error);
+        
+        // Восстанавливаем кнопку
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        
+        // Показываем сообщение об ошибке
+        if (tg.showAlert) {
+            tg.showAlert('Не удалось создать картинку для шеринга. Попробуйте еще раз.');
+        }
+    }
+}
+
+// Альтернативный метод для шеринга в истории (через скачивание)
+async function shareToTelegramStoriesAlternative() {
+    const btn = document.getElementById('share-story-gift-btn');
+    const originalText = btn.innerHTML;
+    
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Подготавливаем...';
+    btn.disabled = true;
+    
+    try {
+        // Создаем картинку
+        const blob = await createShareImage();
+        
+        if (!blob) {
+            throw new Error('Не удалось создать картинку');
+        }
+        
+        // Создаем URL для скачивания
+        const url = URL.createObjectURL(blob);
+        
+        // Создаем ссылку для скачивания
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'telegram-2025-results.png';
+        
+        // Добавляем на страницу и кликаем
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        
+        // Освобождаем URL
+        setTimeout(() => {
+            URL.revokeObjectURL(url);
+        }, 1000);
+        
+        // Помечаем подарок как полученный
+        giftClaimed = true;
+        localStorage.setItem('telegram2025_giftClaimed', 'true');
+        localStorage.setItem('telegram2025_giftCode', userData.giftCode);
+        
+        // Показываем подарок
+        setTimeout(() => {
+            hideShareModal();
+            showGiftModal();
+        }, 500);
+        
+        // Вибрация
+        if (tg.HapticFeedback) {
+            tg.HapticFeedback.notificationOccurred('success');
+        }
+        
+    } catch (error) {
+        console.error('Ошибка:', error);
+        
+        if (tg.showAlert) {
+            tg.showAlert('Ошибка: ' + error.message);
+        }
+        
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+}
+
+// Проверка, был ли подарок уже получен
+function checkGiftStatus() {
+    const claimed = localStorage.getItem('telegram2025_giftClaimed');
+    const savedCode = localStorage.getItem('telegram2025_giftCode');
+    
+    if (claimed === 'true' && savedCode) {
+        giftClaimed = true;
+        userData.giftCode = savedCode;
+        document.getElementById('gift-code').textContent = savedCode;
+    }
+}
+
 // Инициализация приложения
 function initApp() {
-    // Показываем прелоадер
-    preloader.classList.remove('hidden');
+    // Проверяем статус подарка
+    checkGiftStatus();
     
-    // Предзагружаем GIF
-    preloadGifs();
+    // Создаем снегопад
+    createSnowfall();
     
-    // Генерируем данные
+    // Скрываем прелоадер через 1 секунду
+    setTimeout(() => {
+        preloader.classList.add('hidden');
+    }, 1000);
+    
+    // Генерируем случайные данные
     generateUserData();
     
     // Создаём индикаторы
@@ -361,7 +575,7 @@ function initApp() {
     nextBtn.addEventListener('click', () => goToSlide(currentSlide + 1));
     shareFinalBtn.addEventListener('click', showShareModal);
     
-    // Кнопки в модальном окне
+    // Кнопки в модальном окне шеринга
     document.getElementById('copy-text-btn').addEventListener('click', async () => {
         const text = generateShareText();
         const success = await copyToClipboard(text);
@@ -394,14 +608,13 @@ function initApp() {
                 
                 setTimeout(() => {
                     btn.innerHTML = '<i class="fas fa-image"></i> Скопировать картинку';
-                    hideShareModal();
                 }, 2000);
             } catch (err) {
                 // Fallback: скачивание картинки
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = 'telegram-2024-results.png';
+                a.download = 'telegram-2025-results.png';
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -422,23 +635,78 @@ function initApp() {
     
     document.getElementById('share-telegram-btn').addEventListener('click', () => {
         const text = generateShareText();
-        const url = `https://t.me/share/url?url=${encodeURIComponent('https://t.me')}&text=${encodeURIComponent(text)}`;
+        const url = `https://t.me/share/url?url=${encodeURIComponent('https://t.me/ResultsYears_robot')}&text=${encodeURIComponent(text)}`;
         window.open(url, '_blank');
         hideShareModal();
     });
     
-    // Закрытие модального окна
+    // КНОПКА ДЛЯ ПОЛУЧЕНИЯ ПОДАРКА
+    document.getElementById('share-story-gift-btn').addEventListener('click', async () => {
+        // Если подарок уже получен, показываем его снова
+        if (giftClaimed) {
+            showGiftModal();
+            return;
+        }
+        
+        // Проверяем, на каком устройстве пользователь
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        
+        if (isMobile && tg.platform !== 'unknown') {
+            // Используем Telegram Web App API для лучшей интеграции
+            await shareToTelegramStoriesWithGift();
+        } else {
+            // Альтернативный метод для десктопов или когда API недоступно
+            await shareToTelegramStoriesAlternative();
+        }
+    });
+    
+    // Кнопки в модальном окне подарка
+    document.getElementById('copy-gift-code').addEventListener('click', async () => {
+        const code = userData.giftCode;
+        const success = await copyToClipboard(code);
+        
+        if (success) {
+            const btn = document.getElementById('copy-gift-code');
+            btn.innerHTML = '<i class="fas fa-check"></i> Скопирован!';
+            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fas fa-copy"></i> Скопировать';
+            }, 2000);
+        }
+    });
+    
+    document.getElementById('share-gift-btn').addEventListener('click', () => {
+        const text = `🎄 Я получил(а) новогоднюю ёлочку за публикацию итогов 2025 в Telegram!\n\nМой промокод: ${userData.giftCode}\n\nПрисоединяйся и получи свой подарок! 🎁\n\n#TelegramИтоги2025 #НовогоднийПодарок`;
+        const url = `https://t.me/share/url?url=${encodeURIComponent('https://t.me/ResultsYears_robot')}&text=${encodeURIComponent(text)}`;
+        window.open(url, '_blank');
+    });
+    
+    // Закрытие модальных окон
     document.querySelector('.tg-modal-close').addEventListener('click', hideShareModal);
+    document.querySelector('.tg-gift-close').addEventListener('click', hideGiftModal);
+    
     shareModal.addEventListener('click', (e) => {
         if (e.target === shareModal) {
             hideShareModal();
         }
     });
     
+    giftModal.addEventListener('click', (e) => {
+        if (e.target === giftModal) {
+            hideGiftModal();
+        }
+    });
+    
     // Закрытие по Escape
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && !shareModal.classList.contains('hidden')) {
-            hideShareModal();
+        if (e.key === 'Escape') {
+            if (!shareModal.classList.contains('hidden')) {
+                hideShareModal();
+            }
+            if (!giftModal.classList.contains('hidden')) {
+                hideGiftModal();
+            }
         }
     });
     
