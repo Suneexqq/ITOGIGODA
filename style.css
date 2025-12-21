@@ -545,20 +545,53 @@ body {
     flex: 0 0 36px;
 }
 
-/* Стили для кнопки "Поделиться в историях" */
+/* Стили для кнопки "Выложить в историю" */
 #share-story-btn {
-    background: linear-gradient(45deg, #FF9800, #FF5722);
+    background: linear-gradient(45deg, #4CAF50, #2E7D32);
     color: white;
     border: none;
     margin-top: 5px;
 }
 
 #share-story-btn:hover {
-    background: linear-gradient(45deg, #F57C00, #E64A19);
+    background: linear-gradient(45deg, #388E3C, #1B5E20);
 }
 
 #share-story-btn i {
     font-size: 16px;
+}
+
+/* Стили для модального окна с заданием */
+#task-done-btn {
+    background: linear-gradient(45deg, #FF9800, #F57C00);
+    color: white;
+    border: none;
+    margin-top: 5px;
+}
+
+#task-done-btn:hover {
+    background: linear-gradient(45deg, #F57C00, #E65100);
+}
+
+/* Стили для цифр в задании */
+.tg-premium-feature i.fa-1,
+.tg-premium-feature i.fa-2,
+.tg-premium-feature i.fa-3,
+.tg-premium-feature i.fa-4 {
+    width: 24px;
+    height: 24px;
+    background-color: #3390ec;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-style: normal;
+    font-weight: bold;
+}
+
+.tg-premium-feature i.fa-4 {
+    background-color: #4CAF50;
 }
 
 /* Стили для модального окна модерации */
