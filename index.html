@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram Итоги года 2024</title>
+    <title>Telegram Итоги года 2025</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -28,7 +28,7 @@
                     
                     <!-- Центральная GIF -->
                     <div class="tg-gif-container">
-                        <img src="https://media.giphy.com/media/26tknCqiJrBQG6DrW/giphy.gif" 
+                        <img src="gifs/slide1.gif" 
                              alt="Восходящая звезда" 
                              class="tg-slide-gif"
                              id="gif-slide1">
@@ -55,7 +55,7 @@
                     
                     <!-- Центральная GIF -->
                     <div class="tg-gif-container">
-                        <img src="https://media.giphy.com/media/xT5LMHxhOfscxPfIfm/giphy.gif" 
+                        <img src="gifs/slide2.gif" 
                              alt="Premium статус" 
                              class="tg-slide-gif"
                              id="gif-slide2">
@@ -94,7 +94,7 @@
                     
                     <!-- Центральная GIF -->
                     <div class="tg-gif-container">
-                        <img src="https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif" 
+                        <img src="gifs/slide3.gif" 
                              alt="Душа компании" 
                              class="tg-slide-gif"
                              id="gif-slide3">
@@ -121,7 +121,7 @@
                     
                     <!-- Центральная GIF -->
                     <div class="tg-gif-container">
-                        <img src="https://media.giphy.com/media/26n6WywJyh39n1pBu/giphy.gif" 
+                        <img src="gifs/slide4.gif" 
                              alt="Сообщения" 
                              class="tg-slide-gif"
                              id="gif-slide4">
@@ -154,7 +154,7 @@
                     
                     <!-- Центральная GIF -->
                     <div class="tg-gif-container">
-                        <img src="https://media.giphy.com/media/l0HU7Vt4qgdEwFgmA/giphy.gif" 
+                        <img src="gifs/slide5.gif" 
                              alt="Истории" 
                              class="tg-slide-gif"
                              id="gif-slide5">
@@ -182,7 +182,7 @@
                     
                     <!-- Центральная GIF -->
                     <div class="tg-gif-container">
-                        <img src="https://media.giphy.com/media/3o7abKhOpu0NwenH3O/giphy.gif" 
+                        <img src="gifs/slide6.gif" 
                              alt="Голосовые сообщения" 
                              class="tg-slide-gif"
                              id="gif-slide6">
@@ -219,7 +219,7 @@
                     
                     <!-- Центральная GIF -->
                     <div class="tg-gif-container">
-                        <img src="https://media.giphy.com/media/l0MYAsiP1HcZPvzEQ/giphy.gif" 
+                        <img src="gifs/slide7.gif" 
                              alt="Удаленные сообщения" 
                              class="tg-slide-gif"
                              id="gif-slide7">
@@ -250,13 +250,13 @@
             <div class="tg-slide" id="slide8">
                 <div class="tg-slide-content">
                     <div class="tg-slide-header">
-                        <h1 class="tg-slide-title">Твои итоги 2024!</h1>
+                        <h1 class="tg-slide-title">Твои итоги 2025!</h1>
                         <p class="tg-slide-subtitle">Вот как ты провел(-а) год в Telegram</p>
                     </div>
                     
                     <!-- Центральная GIF -->
                     <div class="tg-gif-container">
-                        <img src="https://media.giphy.com/media/26tkhwX6Vnhl8QcC4/giphy.gif" 
+                        <img src="gifs/slide8.gif" 
                              alt="Итоги" 
                              class="tg-slide-gif"
                              id="gif-slide8">
@@ -332,7 +332,7 @@
                         <div class="tg-share-card">
                             <div class="tg-share-header">
                                 <i class="fas fa-star"></i>
-                                <h4>Мои итоги 2024 в Telegram</h4>
+                                <h4>Мои итоги 2025 в Telegram</h4>
                             </div>
                             <div class="tg-share-stats">
                                 <div class="tg-share-stat">
@@ -353,7 +353,7 @@
                                 </div>
                             </div>
                             <div class="tg-share-footer">
-                                #TelegramИтоги2024
+                                #TelegramИтоги2025
                             </div>
                         </div>
                     </div>
@@ -371,13 +371,71 @@
                             <i class="fab fa-telegram"></i>
                             Поделиться в Telegram
                         </button>
+                        <!-- ИЗМЕНЕННАЯ КНОПКА С ПОДАРКОМ -->
+                        <button class="tg-btn tg-btn-gift" id="share-story-gift-btn">
+                            <i class="fas fa-gift"></i>
+                            Поделиться в историях и получить подарок 🎄
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- НОВОЕ МОДАЛЬНОЕ ОКНО С ПОДАРКОМ -->
+        <div class="tg-modal hidden" id="gift-modal">
+            <div class="tg-modal-content tg-gift-modal">
+                <div class="tg-modal-header">
+                    <h3>🎁 Твой новогодний подарок!</h3>
+                    <button class="tg-btn tg-btn-icon tg-gift-close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="tg-modal-body">
+                    <div class="tg-gift-animation">
+                        <div class="tg-gift-tree" id="gift-tree">
+                            <i class="fas fa-tree"></i>
+                        </div>
+                        <div class="tg-gift-sparkle" id="sparkle1"></div>
+                        <div class="tg-gift-sparkle" id="sparkle2"></div>
+                        <div class="tg-gift-sparkle" id="sparkle3"></div>
+                        <div class="tg-gift-sparkle" id="sparkle4"></div>
+                    </div>
+                    
+                    <div class="tg-gift-content">
+                        <h4>Поздравляем! 🎉</h4>
+                        <p>Ты получил(-а) эксклюзивную новогоднюю ёлочку за публикацию итогов в историях!</p>
+                        
+                        <div class="tg-gift-code">
+                            <div class="tg-gift-code-label">Твой промокод:</div>
+                            <div class="tg-gift-code-value" id="gift-code">TGBOT2025-XMAS</div>
+                            <button class="tg-btn tg-btn-small" id="copy-gift-code">
+                                <i class="fas fa-copy"></i> Скопировать
+                            </button>
+                        </div>
+                        
+                        <div class="tg-gift-instructions">
+                            <p><strong>Как использовать:</strong></p>
+                            <ol>
+                                <li>Сохрани промокод</li>
+                                <li>Открой @BotFather в Telegram</li>
+                                <li>Создай нового бота и введи этот промокод</li>
+                                <li>Получи эксклюзивную ёлочку в стикерпаке!</li>
+                            </ol>
+                        </div>
+                        
+                        <div class="tg-gift-share">
+                            <p>Расскажи друзьям о своём подарке!</p>
+                            <button class="tg-btn tg-btn-primary" id="share-gift-btn">
+                                <i class="fas fa-share-alt"></i> Поделиться с друзьями
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Прелоадер для GIF -->
-        <div class="tg-preloader hidden">
+        <div class="tg-preloader" id="preloader">
             <div class="tg-preloader-content">
                 <div class="tg-preloader-spinner">
                     <i class="fas fa-spinner fa-spin"></i>
