@@ -367,135 +367,57 @@
                             <i class="fas fa-image"></i>
                             Скопировать картинку
                         </button>
+                        <button class="tg-btn tg-btn-primary" id="share-story-btn">
+                            <i class="fas fa-history"></i>
+                            Поделиться в историях и получить подарок (ёлку)
+                        </button>
                         <button class="tg-btn tg-btn-secondary" id="share-telegram-btn">
                             <i class="fab fa-telegram"></i>
                             Поделиться в Telegram
                         </button>
-                        <!-- КНОПКА СОЗДАНИЯ ИСТОРИИ -->
-                        <button class="tg-btn tg-btn-story" id="create-story-btn">
-                            <i class="fas fa-bolt"></i>
-                            Создать историю с результатами
-                        </button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- НОВОЕ МОДАЛЬНОЕ ОКНО ПОСЛЕ СОЗДАНИЯ ИСТОРИИ -->
-        <div class="tg-modal hidden" id="story-modal">
-            <div class="tg-modal-content tg-story-modal">
+        <!-- Модальное окно для модерации -->
+        <div class="tg-modal hidden" id="moderation-modal">
+            <div class="tg-modal-content">
                 <div class="tg-modal-header">
-                    <h3>🎉 История создана!</h3>
-                    <button class="tg-btn tg-btn-icon tg-story-close">
+                    <h3>🎄 История на модерации</h3>
+                    <button class="tg-btn tg-btn-icon tg-modal-close" id="moderation-close-btn">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
                 <div class="tg-modal-body">
-                    <div class="tg-story-animation">
-                        <div class="tg-story-icon">
-                            <i class="fas fa-check-circle"></i>
+                    <div class="tg-share-card">
+                        <div class="tg-share-header">
+                            <i class="fas fa-clock"></i>
+                            <h4>Ожидайте проверки</h4>
                         </div>
-                        <div class="tg-story-pulse"></div>
-                    </div>
-                    
-                    <div class="tg-story-content">
-                        <h4>Твоя история создана и отправлена на модерацию!</h4>
+                        <p style="text-align: center; margin: 15px 0; font-size: 14px; color: var(--tg-text);">
+                            Ваша история отправлена на модерацию. Обычно это занимает до 24 часов.
+                        </p>
                         
-                        <div class="tg-story-status">
-                            <div class="tg-story-status-item">
-                                <i class="fas fa-clock"></i>
-                                <div>
-                                    <strong>Статус:</strong>
-                                    <span class="tg-status-waiting">На модерации</span>
-                                </div>
+                        <div class="tg-premium-features" style="margin-top: 15px;">
+                            <div class="tg-premium-feature">
+                                <i class="fas fa-gift" style="color: #4CAF50;"></i>
+                                <span>После проверки вы получите новогоднюю ёлку в подарок! 🎄</span>
                             </div>
-                            <div class="tg-story-status-item">
-                                <i class="fas fa-history"></i>
-                                <div>
-                                    <strong>Время обработки:</strong>
-                                    <span>до 24 часов</span>
-                                </div>
+                            <div class="tg-premium-feature">
+                                <i class="fas fa-bolt" style="color: #FF9800;"></i>
+                                <span>Чтобы модерация прошла быстрее, подпишитесь на наш канал</span>
                             </div>
                         </div>
                         
-                        <div class="tg-story-message">
-                            <p><strong>Как получить подарок быстрее:</strong></p>
-                            <p>Подпишись на наш канал <strong>@Telegram_News_RU</strong> и получи промокод в течение 1 часа!</p>
-                        </div>
-                        
-                        <div class="tg-story-actions">
-                            <button class="tg-btn tg-btn-channel" id="subscribe-channel-btn">
+                        <div class="tg-share-actions" style="margin-top: 20px;">
+                            <button class="tg-btn tg-btn-primary" id="subscribe-channel-btn">
                                 <i class="fab fa-telegram"></i>
                                 Подписаться на канал
                             </button>
-                            <button class="tg-btn tg-btn-secondary" id="check-status-btn">
+                            <button class="tg-btn tg-btn-secondary" id="check-moderation-btn">
                                 <i class="fas fa-sync-alt"></i>
-                                Проверить статус
-                            </button>
-                        </div>
-                        
-                        <div class="tg-story-notification">
-                            <i class="fas fa-bell"></i>
-                            <span>Мы уведомим тебя, когда история пройдет модерацию</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- МОДАЛЬНОЕ ОКНО ДЛЯ ПОДАРКА ПОСЛЕ МОДЕРАЦИИ -->
-        <div class="tg-modal hidden" id="gift-modal">
-            <div class="tg-modal-content tg-gift-modal">
-                <div class="tg-modal-header">
-                    <h3>🎁 Твой новогодний подарок!</h3>
-                    <button class="tg-btn tg-btn-icon tg-gift-close">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <div class="tg-modal-body">
-                    <div class="tg-gift-animation">
-                        <div class="tg-gift-tree" id="gift-tree">
-                            <i class="fas fa-tree"></i>
-                        </div>
-                        <div class="tg-gift-sparkle" id="sparkle1"></div>
-                        <div class="tg-gift-sparkle" id="sparkle2"></div>
-                        <div class="tg-gift-sparkle" id="sparkle3"></div>
-                        <div class="tg-gift-sparkle" id="sparkle4"></div>
-                    </div>
-                    
-                    <div class="tg-gift-content">
-                        <h4>Поздравляем! Твоя история прошла модерацию 🎉</h4>
-                        
-                        <div class="tg-gift-reward">
-                            <div class="tg-gift-reward-icon">
-                                <i class="fas fa-gift"></i>
-                            </div>
-                            <div class="tg-gift-reward-text">
-                                <strong>Твой подарок:</strong>
-                                <span>Эксклюзивная новогодняя ёлочка в Telegram</span>
-                            </div>
-                        </div>
-                        
-                        <div class="tg-gift-code">
-                            <div class="tg-gift-code-label">Твой промокод на ёлочку:</div>
-                            <div class="tg-gift-code-value" id="gift-code">TG-XMAS-2025-XXXX</div>
-                            <button class="tg-btn tg-btn-small" id="copy-gift-code">
-                                <i class="fas fa-copy"></i> Скопировать
-                            </button>
-                        </div>
-                        
-                        <div class="tg-gift-instructions">
-                            <p><strong>Как получить ёлочку:</strong></p>
-                            <ol>
-                                <li>Открой Telegram и найди бота @ChristmasBot</li>
-                                <li>Отправь ему промокод из поля выше</li>
-                                <li>Получи свою эксклюзивную ёлочку!</li>
-                            </ol>
-                        </div>
-                        
-                        <div class="tg-gift-share">
-                            <button class="tg-btn tg-btn-primary" id="share-gift-btn">
-                                <i class="fas fa-share-alt"></i> Рассказать друзьям
+                                Проверить статус модерации
                             </button>
                         </div>
                     </div>
